@@ -35,8 +35,8 @@
 
 ## ارتباط با من
 
-[لینکدین من](https://www.linkedin.com/in/seyedahmaddv)  
-(در صورت نیاز، لینکدین خود را جایگزین کنید)
+<a href="https://www.linkedin.com/in/seyedahmaddv" target="_blank">لینکدین من</a>  
+
 
 ---
 
