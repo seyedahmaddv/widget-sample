@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نمونه ویجت‌های تعاملی</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        
+        .widgets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .widget {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .widget:hover {
+            transform: translateY(-5px);
+        }
+        
+        .widget h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        /* گردونه شانس */
+        .spin-wheel {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+        
+        .wheel {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff6b6b 0deg 60deg,
+                #4ecdc4 60deg 120deg,
+                #45b7d1 120deg 180deg,
+                #96ceb4 180deg 240deg,
+                #feca57 240deg 300deg,
+                #ff9ff3 300deg 360deg
+            );
+            position: relative;
+            transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .wheel::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #333;
+            z-index: 10;
+        }
+        
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #333;
+            border-radius: 50%;
+            z-index: 5;
+        }
+        
+        .spin-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+        
+        .spin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .spin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* کوئیز */
+        .quiz-question {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .quiz-option {
+            background: #e9ecef;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: right;
+        }
+        
+        .quiz-option:hover {
+            background: #dee2e6;
+            transform: translateX(-5px);
+        }
+        
+        .quiz-option.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .quiz-option.wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* تیکت تخفیف */
+        .discount-ticket {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .discount-ticket::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .discount-code {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+        
+        .copy-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        /* نظرسنجی */
+        .poll {
+            text-align: center;
+        }
+        
+        .poll-question {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .poll-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .poll-option {
+            position: relative;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .poll-option:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        
+        .poll-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 8px;
+            opacity: 0.1;
+            transition: width 0.5s ease;
+        }
+        
+        .poll-percentage {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        /* لیدربورد */
+        .leaderboard {
+            max-width: 100%;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .leaderboard-item:hover {
+            background: #e9ecef;
+            transform: translateX(-5px);
+        }
+        
+        .player-rank {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .player-score {
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .result-display {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .embed-code {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .embed-code h4 {
+            margin-bottom: 10px;
+            color: #495057;
+        }
+        
+        .code-block {
+            background: #343a40;
+            color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>نمونه ویجت‌های تعاملی برای مسابقه</h1>
+        
+        <div class="widgets-grid">
+            <!-- گردونه شانس -->
+            <div class="widget">
+                <h3>🎡 گردونه شانس</h3>
+                <div class="spin-wheel">
+                    <div class="wheel" id="wheel">
+                        <div class="wheel-center"></div>
+                    </div>
+                </div>
+                <button class="spin-btn" onclick="spinWheel()">چرخاندن گردونه</button>
+                <div class="result-display" id="wheel-result"></div>
+            </div>
+            
+            <!-- کوئیز تعاملی -->
+            <div class="widget">
+                <h3>🧠 کوئیز تعاملی</h3>
+                <div class="quiz-question">
+                    پایتخت ایران کدام شهر است؟
+                </div>
+                <div class="quiz-options">
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">اصفهان</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, true)">تهران</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">شیراز</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">مشهد</button>
+                </div>
+            </div>
+            
+            <!-- تیکت تخفیف -->
+            <div class="widget">
+                <h3>🎫 کد تخفیف</h3>
+                <div class="discount-ticket">
+                    <div>تخفیف ویژه!</div>
+                    <div class="discount-code" id="discount-code">SAVE20</div>
+                    <div>20% تخفیف</div>
+                    <button class="copy-btn" onclick="copyCode()">کپی کد</button>
+                </div>
+            </div>
+            
+            <!-- نظرسنجی -->
+            <div class="widget">
+                <h3>📊 نظرسنجی لحظه‌ای</h3>
+                <div class="poll">
+                    <div class="poll-question">بهترین زبان برنامه‌نویسی کدام است؟</div>
+                    <div class="poll-options">
+                        <div class="poll-option" onclick="vote('JavaScript', this)">
+                            <div class="poll-bar" style="width: 35%;"></div>
+                            JavaScript
+                            <span class="poll-percentage">35%</span>
+                        </div>
+                        <div class="poll-option" onclick="vote('Python', this)">
+                            <div class="poll-bar" style="width: 25%;"></div>
+                            Python
+                            <span class="poll-percentage">25%</span>
+                        </div>
+                        <div class="poll-option" onclick="vote('Java', this)">
+                            <div class="poll-bar" style="width: 20%;"></div>
+                            Java
+                            <span class="poll-percentage">20%</span>
+                        </div>
+                        <div class="poll-option" onclick="vote('C++', this)">
+                            <div class="poll-bar" style="width: 20%;"></div>
+                            C++
+                            <span class="poll-percentage">20%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- لیدربورد -->
+            <div class="widget">
+                <h3>🏆 جدول امتیازات</h3>
+                <div class="leaderboard">
+                    <div class="leaderboard-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="player-rank">1</div>
+                            <span>علی احمدی</span>
+                        </div>
+                        <div class="player-score">2,450</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="player-rank">2</div>
+                            <span>مریم محمدی</span>
+                        </div>
+                        <div class="player-score">2,300</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="player-rank">3</div>
+                            <span>رضا کریمی</span>
+                        </div>
+                        <div class="player-score">2,100</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- میني گیم -->
+            <div class="widget">
+                <h3>🎮 بازی کلیک سریع</h3>
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; margin: 20px 0;" id="click-score">0</div>
+                    <button class="spin-btn" onclick="startClickGame()" id="click-btn">شروع بازی</button>
+                    <div style="margin-top: 10px; color: #666;" id="click-timer"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- کد embed نمونه -->
+        <div class="embed-code">
+            <h4>نحوه نصب ویجت روی سایت:</h4>
+            <div class="code-block">&lt;script&gt;
+(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "https://yoursite.com/widget.js";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'campaign-widget'));
+&lt;/script&gt;</div>
+        </div>
+    </div>
+
+    <script>
+        let isSpinning = false;
+        let clickGameActive = false;
+        let clickScore = 0;
+        let clickTimer = 10;
+
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const wheel = document.getElementById('wheel');
+            const resultDiv = document.getElementById('wheel-result');
+            const btn = document.querySelector('.spin-btn');
+            
+            btn.disabled = true;
+            btn.textContent = 'در حال چرخش...';
+            
+            const spins = Math.floor(Math.random() * 5) + 5; // 5-10 دور
+            const finalAngle = Math.floor(Math.random() * 360);
+            const totalRotation = spins * 360 + finalAngle;
+            
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+            
+            setTimeout(() => {
+                const prizes = ['تخفیف 10%', 'تخفیف 20%', 'ارسال رایگان', 'جایزه ویژه', 'امتیاز طلایی', 'تخفیف 5%'];
+                const prizeIndex = Math.floor(finalAngle / 60);
+                const prize = prizes[prizeIndex] || prizes[0];
+                
+                resultDiv.textContent = `🎉 تبریک! شما ${prize} برنده شدید!`;
+                resultDiv.style.display = 'block';
+                
+                btn.disabled = false;
+                btn.textContent = 'چرخاندن مجدد';
+                isSpinning = false;
+            }, 3000);
+        }
+
+        function checkAnswer(element, isCorrect) {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(opt => opt.disabled = true);
+            
+            if (isCorrect) {
+                element.classList.add('correct');
+                element.textContent += ' ✓ صحیح!';
+            } else {
+                element.classList.add('wrong');
+                element.textContent += ' ✗ غلط!';
+                // نمایش جواب صحیح
+                options.forEach(opt => {
+                    if (opt.textContent.includes('تهران')) {
+                        opt.classList.add('correct');
+                        opt.textContent += ' ✓ (جواب صحیح)';
+                    }
+                });
+            }
+            
+            setTimeout(() => {
+                options.forEach(opt => {
+                    opt.disabled = false;
+                    opt.className = 'quiz-option';
+                    opt.textContent = opt.textContent.split(' ')[0];
+                });
+            }, 3000);
+        }
+
+        function copyCode() {
+            const code = document.getElementById('discount-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'کپی شد! ✓';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        function vote(option, element) {
+            // شبیه‌سازی آپدیت آمار
+            const percentages = [Math.floor(Math.random() * 20) + 25, Math.floor(Math.random() * 20) + 25, 
+                               Math.floor(Math.random() * 20) + 15, Math.floor(Math.random() * 20) + 15];
+            const options = document.querySelectorAll('.poll-option');
+            
+            options.forEach((opt, index) => {
+                const bar = opt.querySelector('.poll-bar');
+                const percentage = opt.querySelector('.poll-percentage');
+                bar.style.width = percentages[index] + '%';
+                percentage.textContent = percentages[index] + '%';
+            });
+            
+            element.style.background = '#e8f4f8';
+            element.style.borderColor = '#17a2b8';
+        }
+
+        function startClickGame() {
+            if (clickGameActive) return;
+            
+            clickGameActive = true;
+            clickScore = 0;
+            clickTimer = 10;
+            
+            const btn = document.getElementById('click-btn');
+            const scoreEl = document.getElementById('click-score');
+            const timerEl = document.getElementById('click-timer');
+            
+            btn.textContent = 'کلیک کن!';
+            
+            const gameInterval = setInterval(() => {
+                clickTimer--;
+                timerEl.textContent = `زمان باقی‌مانده: ${clickTimer} ثانیه`;
+                
+                if (clickTimer <= 0) {
+                    clearInterval(gameInterval);
+                    clickGameActive = false;
+                    btn.textContent = `بازی تمام! امتیاز: ${clickScore}`;
+                    timerEl.textContent = 'برای شروع مجدد کلیک کنید';
+                    
+                    setTimeout(() => {
+                        btn.textContent = 'شروع بازی';
+                        scoreEl.textContent = '0';
+                        timerEl.textContent = '';
+                    }, 3000);
+                }
+            }, 1000);
+            
+            btn.onclick = () => {
+                if (clickGameActive) {
+                    clickScore++;
+                    scoreEl.textContent = clickScore;
+                }
+            };
+        }
+    </script>
+</body>
+</html>
